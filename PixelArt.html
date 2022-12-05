@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pixel Art Creator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div>
+    <label for="color-picker">Color:</label>
+    <input type="color" id="color-picker" value="#000000">
+  </div>
+  <div>
+    <label for="brush-size">Brush size:</label>
+    <input type="range" id="brush-size" min="1" max="50" value="10">
+  </div>
+  <button id="clear-button">Clear</button>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const colorPicker = document.getElementById("color-picker");
+    const brushSize = document.getElementById("brush-size");
+    const clearButton = document.getElementById("clear-button");
+    let painting = false;
+    let currentColor = "#000000";
+    let currentBrushSize = 10;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function startPosition(e) {
+      painting = true;
+      draw(e);
+    }
+
+    function finishedPosition() {
+      painting = false;
+      ctx.beginPath();
+    }
+
+    function draw(e) {
+      if (!painting) return;
+
+      ctx.lineWidth = currentBrushSize;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = currentColor;
+
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateColor(e) {
+      currentColor = e.target.value;
+    }
+
+    function updateBrushSize(e) {
+      currentBrushSize = e.target.value;
+    }
+
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+    colorPicker.addEventListener("input", updateColor);
+    brushSize.addEventListener("input", updateBrushSize);
+    clearButton.addEventListener("click", clearCanvas);
+  </script>
+</body>
+</html>
